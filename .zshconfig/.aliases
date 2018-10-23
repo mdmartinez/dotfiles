@@ -1,0 +1,159 @@
+#!/bin/zsh
+###############################################################################
+# Aliases                                                                     #
+###############################################################################
+
+alias e='subl'
+
+alias reload!='. ~/.zshrc'
+
+alias cls='clear'
+
+alias git=hub
+
+# `cat` with beautiful colors. requires: sudo easy_install -U Pygments
+alias ccat2='pygmentize -O style=autumn -f console256 -g'
+
+alias ll='ls -l'
+alias la='ls -a'
+alias ls='ls -AFGh'
+alias lc='colorls'
+alias lsd='ls -l | grep "^d"'
+
+alias es='exa -a --long'
+alias es2='exa -a --long --tree --level=2'
+alias es3='exa -a --long --tree --level=3'
+alias es4='exa -a --long --tree --level=4'
+
+# docker
+alias d='docker $*'
+alias d-c='docker-compose $*'
+
+# tmux
+alias ta='tmux attach -t'
+alias tad='tmux attach -d -t'
+alias ts='tmux new-session -s'
+alias tl='tmux list-sessions'
+alias tksv='tmux kill-server'
+alias tkss='tmux kill-session -t'
+
+# quickly create an MIT license
+alias mit='license-up mit Daniel Martinez mdmartinez.com'
+
+# hardcode pandoc location due to Pyenv whitelist issue
+alias pandoc=/usr/local/bin/pandoc
+
+# git
+# git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'"
+
+# git root
+alias gr='[ ! -z `git rev-parse --show-cdup` ] && cd `git rev-parse --show-cdup || pwd`'
+
+alias gs='git status'
+alias gc='git commit'
+alias gp='git push'
+
+alias cask='brew cask'
+
+# Update installed Ruby gems, Homebrew, npm, and their installed packages
+alias brew_update="brew -v update; brew upgrade --force-bottle --cleanup; brew cleanup; brew cask cleanup; brew prune; brew doctor; npm-check -g -u"
+alias update_brew_npm_gem='brew_update; npm install npm -g; npm update -g; sudo gem update --system; sudo gem update --no-document'
+
+# mv, rm, cp
+alias mv='mv -v'
+alias rm='rm -i -v'
+alias cp='cp -v'
+
+alias clipin='pbcopy'
+alias clipout='pbpaste'
+
+# alias tree='ls -R | grep : | sed -e '\''s/://'\'' -e '\''s/[^-][^\/]*\//--/g'\'' -e '\''s/^/   /'\'' -e '\''s/-/|/'\'''
+
+alias ip="dig +short myip.opendns.com @resolver1.opendns.com"
+
+# Recursively delete `.DS_Store` files
+alias cleanup_dsstore="find . -name '*.DS_Store' -type f -ls -delete"
+
+alias diskspace_report="df -P -kHl"
+alias free_diskspace_report="diskspace_report"
+
+# File size
+alias fs="stat -f \"%z bytes\""
+
+# Empty the Trash on all mounted volumes and the main HDD. then clear the useless sleepimage
+alias emptytrash=" \
+    sudo rm -rfv /Volumes/*/.Trashes; \
+    rm -rfv ~/.Trash/*; \
+    sudo rm -v /private/var/vm/sleepimage; \
+    rm -rv \"/Users/paulirish/Library/Application Support/stremio/Cache\";  \
+    rm -rv \"/Users/paulirish/Library/Application Support/stremio/stremio-cache\" \
+"
+
+# python search
+# Grep among .py files
+# alias pygrep='grep --include="*.py"'
+# Find python file
+# alias pyfind='find . -name "*.py"'
+
+# Kubernetes
+# alias k=kubectl
+
+# Drop into an interactive terminal on a container
+# alias keti='k exec -ti'
+
+# Manage configuration quickly to switch contexts between local, dev ad staging.
+# alias kcuc='k config use-context'
+# alias kcsc='k config set-context'
+# alias kcdc='k config delete-context'
+# alias kccc='k config current-context'
+
+# Pod management.
+# alias kgp='k get pods'
+# alias klp='k logs pods'
+# alias kep='k edit pods'
+# alias kdp='k describe pods'
+# alias kdelp='k delete pods'
+
+# Service management.
+# alias kgs='k get svc'
+# alias kes='k edit svc'
+# alias kds='k describe svc'
+# alias kdels='k delete svc'
+
+# Secret management
+# alias kgsec='k get secret'
+# alias kdsec='k describe secret'
+# alias kdelsec='k delete secret'
+
+# Deployment management.
+# alias kgd='k get deployment'
+# alias ked='k edit deployment'
+# alias kdd='k describe deployment'
+# alias kdeld='k delete deployment'
+# alias ksd='k scale deployment'
+# alias krsd='k rollout status deployment'
+
+# Rollout management.
+# alias kgrs='k get rs'
+# alias krh='k rollout history'
+# alias kru='k rollout undo'
+
+# postgres
+# alias startpost='pg_ctl -D /usr/local/var/postgres -l /usr/local/var/postgres/server.log start'
+# alias stoppost='pg_ctl -D /usr/local/var/postgres stop -s -m fast'
+# alias restartpost='stoppost && sleep 1 && startpost'
+# alias reloadpost='pg_ctl reload -D /usr/local/var/postgres -s'
+# alias statuspost='pg_ctl status -D /usr/local/var/postgres -s'
+
+# This alias updates the prompt in Terminal to display correctly
+# alias fix='export POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="${hand_color}\u$CODEPOINT_OF_AWESOME_HAND_O_RIGHT\u20";export ZLE_RPROMPT_INDENT=1;clear;'
+# alias unfix='export POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="";export ZLE_RPROMPT_INDENT=0;clear;'
+
+# Added a bunch of commands to send to each pane because of the 'fix' alias that needs to be sent to Terminal.
+alias tq="tmux new-session -s quad -d;tmux splitw -v -p 50 -d;tmux splitw -h -p 50 -d;tmux selectp -t 2;tmux splitw -h -p 50 -d;tmux selectp -t 0;tmux send-keys -t 'quad:1.0' Enter;tmux send-keys -t 'quad:1.1' Enter;tmux send-keys -t 'quad:1.2' Enter;tmux send-keys -t 'quad:1.3' Enter;tmux a -t quad;"
+alias td="tmux new-session -s dev -d;tmux splitw -h -p 50 -d;tmux selectp -t 1;tmux splitw -v -p 50 -d;tmux selectp -t 0;tmux send-keys -t 'dev:1.0' Enter;tmux send-keys -t 'dev:1.1'  Enter;tmux send-keys -t 'dev:1.2'  Enter;tmux a -t dev;"
+# alias tq="tmux new-session -s quad -d;tmux splitw -v -p 50 -d;tmux splitw -h -p 50 -d;tmux selectp -t 2;tmux splitw -h -p 50 -d;tmux selectp -t 0;tmux a -t quad;"
+# alias td="tmux new-session -s dev -d;tmux splitw -h -p 50 -d;tmux selectp -t 1;tmux splitw -v -p 50 -d;tmux selectp -t 0;tmux a -t dev;"
+
+# Aliases to combat Zsh's auto correct
+# alias tldr='nocorrect tldr'

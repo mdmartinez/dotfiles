@@ -1,0 +1,89 @@
+#!/bin/zsh
+###############################################################################
+# Powerlevel 9k Configuration                                                #
+###############################################################################
+
+# Load more glyphs!
+POWERLEVEL9K_MODE="nerdfont-fontconfig"
+
+# Override font variables with custom characters
+POWERLEVEL9K_VCS_GIT_ICON='\uF1D3 '
+POWERLEVEL9K_VCS_GIT_GITHUB_ICON='\uF113 '
+POWERLEVEL9K_BACKGROUND_JOBS_ICON='\u2699'
+POWERLEVEL9K_BATTERY_ICON='\U1F50B'
+POWERLEVEL9K_PYTHON_ICON='\U1F40D '
+
+
+# Powerlevel9k Settings
+POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir dir_writable virtualenv vcs)
+# POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator docker_machine background_jobs command_execution_time battery custom_wifi_signal load history time)
+POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status root_indicator background_jobs docker_machine command_execution_time)
+POWERLEVEL9K_MULTILINE_FIRST_PROMPT_PREFIX=''
+POWERLEVEL9K_PROMPT_ON_NEWLINE=true
+POWERLEVEL9K_RPROMPT_ON_NEWLINE=true
+POWERLEVEL9K_PROMPT_ADD_NEWLINE=true
+
+# Setting a terminal color
+# Run `color-table` to get color options
+control_char="\033["
+style_code="0;" # 0 = default, 1 = bold, 4 = underlined, 7 = negative
+fore_or_back="38;5;" # 38;5; = foreground, 48;5; = background
+color='63' # 4 = blue, 3 = orange, 63 = purple
+hand_color="${control_char}${style_code}${fore_or_back}${color}m"
+# POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX="${hand_color}\u$CODEPOINT_OF_AWESOME_HAND_O_RIGHT\u20"
+POWERLEVEL9K_MULTILINE_LAST_PROMPT_PREFIX=""
+
+# POWERLEVEL9K_LEFT_SEGMENT_SEPARATOR=$'\uE0B1'
+# POWERLEVEL9K_TIME_BACKGROUND='red'
+# POWERLEVEL9K_TIME_FOREGROUND='blue'
+
+POWERLEVEL9K_DIR_DEFAULT_BACKGROUND='043'
+POWERLEVEL9K_DIR_HOME_BACKGROUND='043'
+POWERLEVEL9K_DIR_HOME_SUBFOLDER_BACKGROUND='043'
+
+POWERLEVEL9K_HISTORY_BACKGROUND='037'
+
+POWERLEVEL9K_BATTERY_CHARGED_BACKGROUND='053'
+POWERLEVEL9K_BATTERY_CHARGING_BACKGROUND='053'
+POWERLEVEL9K_BATTERY_DISCONNECTED_BACKGROUND='053'
+POWERLEVEL9K_BATTERY_CHARGED_VISUAL_IDENTIFIER_COLOR='blue'
+
+POWERLEVEL9K_BACKGROUND_JOBS_BACKGROUND='178'
+POWERLEVEL9K_BACKGROUND_JOBS_FOREGROUND='008'
+
+POWERLEVEL9K_TIME_FORMAT="%D{\u$CODEPOINT_OF_OCTICONS_CLOCK %H:%M}"
+POWERLEVEL9K_ALWAYS_SHOW_CONTEXT=false
+POWERLEVEL9K_COMMAND_EXECUTION_TIME_THRESHOLD=1
+
+POWERLEVEL9K_STATUS_OK_IN_NON_VERBOSE=false
+POWERLEVEL9K_STATUS_VERBOSE=false
+
+POWERLEVEL9K_HOME_FOLDER_ABBREVIATION=''
+POWERLEVEL9K_HOME_ICON="\U0001F3E0 " # 🏠
+
+DISABLE_AUTO_TITLE="true"
+DEFAULT_USER="$USER"
+
+## Custom WIFI Function
+POWERLEVEL9K_CUSTOM_WIFI_SIGNAL="zsh_wifi_signal"
+POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_BACKGROUND="blue"
+POWERLEVEL9K_CUSTOM_WIFI_SIGNAL_FOREGROUND="yellow"
+
+zsh_wifi_signal() {
+        local output=$(/System/Library/PrivateFrameworks/Apple80211.framework/Versions/A/Resources/airport -I)
+        local airport=$(echo $output | grep 'AirPort' | awk -F': ' '{print $2}')
+
+        if [ "$airport" = "Off" ]; then
+                local color='%F{yellow}'
+                echo -n "%{$color%}Wifi Off"
+        else
+                # local ssid=$(echo $output | grep ' SSID' | awk -F': ' '{print $2}')
+                local speed=$(echo $output | grep 'lastTxRate' | awk -F': ' '{print $2}')
+                local color='%F{yellow}'
+
+                [[ $speed -gt 100 ]] && color='%F{green}'
+                [[ $speed -lt 50 ]] && color='%F{red}'
+
+                echo -n "%{$color%}$ssid $speed Mb/s%{%f%}" # removed char not in my PowerLine font
+        fi
+}

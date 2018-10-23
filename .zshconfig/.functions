@@ -1,0 +1,789 @@
+#!/bin/zsh
+###############################################################################
+# Functions                                                                   #
+###############################################################################
+
+# Returns whether the given command is executable or aliased.
+_has() {
+    return $( which $1 >/dev/null )
+}
+
+color-table() {
+    echo -en "\n   +  "
+    for i in {0..35}; do
+      printf "%2b " $i
+    done
+
+    printf "\n\n %3b  " 0
+    for i in {0..15}; do
+      echo -en "\033[48;5;${i}m  \033[m "
+    done
+
+    #for i in 16 52 88 124 160 196 232; do
+    for i in {0..6}; do
+      let "i = i*36 +16"
+      printf "\n\n %3b  " $i
+      for j in {0..35}; do
+        let "val = i+j"
+        echo -en "\033[48;5;${val}m  \033[m "
+      done
+    done
+
+    echo -e "\n"
+}
+
+## save a webpage to a file
+save() {
+  pandoc -f html -t gfm $1 -o ~/Repos/Reference/$2
+}
+
+# Make PATH easier to read by printing each directory on a new line
+easypath() {
+  echo '\n'; echo $PATH | tr ':' '\0' | xargs -I _ -0 echo _ | ccat
+}
+
+# TEMPLATE
+# help-template() {
+#   echo "
+# # 'TEXT GOES HERE'
+# " | ccat
+# }
+
+edz() {
+  code ~/.zshconfig ~/.zplug ~/.zshconfig/.functions ~/.zshrc
+}
+
+addpet() {
+  PREV=$(fc -lrn | head -n 1)
+  sh -c "pet new `printf %q "$PREV"`"
+}
+
+startup-command() {
+  echo "
+  Command Reference : help-tools-cli-$
+  Options           : mgmt | search | macos | macos-zsh | status | data | perf
+  All Options       : help-[TAB]" | ccat
+}
+
+help-tools-cli-unix() {
+  echo "
+  # 'dd'
+  # copy and convert. --progress is a useful flag.
+  # *This command can destroy your computer!* Be careful!
+  # 'df'
+  # file system disk space usage overview.
+  # 'du'
+  # file/folder disk space usage overview.
+  # 'watch'
+  # tail any program. Like cron but with the '-n' flag can go down to 1 second intervals.
+  " | ccat
+}
+
+help-tools-cli-macos() {
+  echo "
+  # Flush DNS Cache.
+  # "dscacheutil -flushcache"
+  " | ccat;
+  ccat "/Users/Home/Repos/Reference/cheatsheets/osx.md"
+}
+
+help-tools-cli-macos-zsh() {
+  echo "
+  # | Command       | Description                                       |
+  # | :------------ | :----------------------------------------------   |
+  # | "tab"           | Open the current directory in a new tab.          |
+  # | "split_tab"     | Split the current terminal tab horizontally.      |
+  # | "vsplit_tab"    | Split the current terminal tab vertically.        |
+  # | "ofd"           | Open the current directory in a Finder window.    |
+  # | "pfd"           | Return the path of the frontmost Finder window.   |
+  # | "pfs"           | Return the current Finder selection.              |
+  # | "cdf"           | "cd" to the current Finder directory.               |
+  # | "pushdf"        | "pushd" to the current Finder directory.            |
+  # | "quick-look"    | Quick-Look a specified file.                      |
+  # | "man-preview"   | Open a specified man page in Preview app.         |
+  # | "showfiles"     | Show hidden files.                                |
+  # | "hidefiles"     | Hide the hidden files.                            |
+  # | "itunes"        | Control iTunes. User "itunes -h" for usage details. |
+  # | "spotify"       | Control Spotify and search by artist, album, track and etc. |
+  " | ccat
+}
+
+help-tools-cli-mgmt() {
+  echo "
+# 'tldr'
+# Abbreviated man pages.
+
+# 'cheat'
+# Alternative to 'tldr'.
+
+# 'howdoi'
+# Instant coding answers.
+
+# 'brew cask'
+# Install Mac apps.
+
+# 'm-cli'
+# Useful utils for MacOS.
+
+# 'mas'
+# CLI for Mac App Store.
+
+# 'hub'
+# Github wrapper.
+# 'git browse -- issues' => open https://github.com/github/hub/issues
+# 'git browse mojombo/jekyll wiki' => open https://github.com/mojombo/jekyll/wiki
+# 'git clone dotfiles' => git clone git://github.com/YOUR_USER/dotfiles.git
+# 'git clone github/hub' => git clone git://github.com/github/hub.git
+# 'git fork' => git remote add YOUR_USER git://github.com/YOUR_USER/hub.git
+# 'git checkout https://github.com/github/hub/pull/134' 
+#    => creates a new branch with the contents of the pull request
+# 'git am -3 https://github.com/github/hub/pull/134' 
+#    => directly apply all commits from a pull request to the current branch
+# 'git cherry-pick https://github.com/xoebus/hub/commit/177eeb8' => cherry-pick a GitHub URL
+# 'git compare v0.9..v1.0' => open the GitHub compare view between two releases
+# 'git compare -u feature | pbcopy' => put compare URL for a topic branch to clipboard
+
+# 'saws'
+# supercharged AWS CLI.
+
+# 'gcloud'
+# google cloud CLI.
+
+# 'up'
+# One-command deploys to AWS.
+
+# 'serverless'
+# AWS Lambda deployments.
+
+# 'datadog-agent'
+# agent for datadog.
+# call 'status' for status, and 'launch-gui' for the webui. 
+
+# 'rclone'
+# rsync for cloud storage.
+# https://github.com/ncw/rclone
+
+# 'cockpit'
+# sysadmin panel for linux servers.
+# https://cockpit-project.org/
+
+# 'haxor-news'
+# CLI for HN.
+
+# 'fasd'
+# Fancy cd.
+
+# 'exa'
+# Fancy ls (Rust).
+
+# 'pandoc'
+# Universal markup converter.
+
+# 'gifify'
+# Convert a video to a GIF.
+
+# 'httpie'
+# HTTP client. Fancy curl.
+
+# 'pgcli'
+# Postgres CLI with autocomplete and syntax highlighting.
+
+# 'pgweb'
+# Postgres client with in-browser IDE.
+
+# 'commitizen'
+# Nice git commit message formatter.
+
+# 'tmux'
+# Terminal multiplexer.
+
+# 'links'
+# Text based web browser.
+
+# 'asciinema'
+# Terminal session recorder.
+
+# 'termtosvg'
+# Terminal session recorder (to svg animation!)
+
+# 'hyperfine'
+# benchmarking tool.
+
+# 'fast'
+# Netflix DC speed test.
+
+# 'speedtest'
+# ISP speed test.
+
+# 'license-up'
+# Quickly create a license.
+
+# 'youtube-dl'
+# Download YouTube videos.
+
+# 'bat'
+# Fancy version of cat.
+
+# 'ccat'
+# Fancy version of cat.
+
+# 'imgcat'
+# cat for images.
+
+# 'entr'
+# Filesystem watcher.
+# Nice for builds and tests on file changes.
+
+# 'reflex'
+# Filesystem watcher.
+" | ccat
+}
+
+help-tools-cli-search() {
+  echo "
+# 'rg'
+# Very fast search one.
+
+# 'ag'
+# Very fast search two.
+
+# 'fzf'
+# Command-line fuzzy finder.
+# C-T brings up interactive search.
+# You can select multiple items with TAB key
+# code **<TAB>
+# ps aux | fzf
+# history | fzf
+# kill -9 <TAB>
+# ssh **<TAB>
+# telnet **<TAB>
+# unset **<TAB>
+# export **<TAB>
+# unalias **<TAB>
+
+# 'mdfind'
+# CLI for Spotlight.
+
+# 'fd'
+# find with a better API.
+
+# 'hound'
+# Very fast code search.
+
+# 'grep'
+# The original searching tool.
+# Examples
+# 'grep -whor'
+# Pinches whole words '(by regex usually, e.g. [A-Z][A-Za-z]*Exception)' out of files recursively. Then throw in 'sort' and 'uniq -c'.
+# Example:  'grep -whor [A-Z][A-Za-z]*Exception * | sort | uniq -c'
+# Add '1 | grep -Fwf - *' to then take that list of exceptions and find them back in the actual files again.
+
+" | ccat
+}
+
+help-tools-cli-data() {
+  echo "
+# 'jq'
+# JSON processor.
+
+# 'underscore'
+# JSON processor.
+
+# 'rq'
+# Record analysis and transformation.
+
+# 'xsv'
+# CSV command line toolkit (Rust).
+
+# 'pv'
+# Monitor data through a pipe.
+
+# 'lnav'
+# Log file analysis.
+
+# 'statsd'
+# Statistics collector. Useful for sending stats to a graphing tool like Graphite.
+
+# 'netdata'
+# Stats monitoring.
+" | ccat
+}
+
+help-tools-cli-status() {
+  echo "
+# 'neofetch'
+# displays basic terminal info.
+
+# 'screenfetch'
+# displays basic terminal info.
+
+# 'tiny-care-terminal'
+# displays motivational tweets and tracks local git repos.
+
+# 'wtf'
+# Status board for linked online accounts (JIRA, PagerDuty, etc).
+" | ccat
+}
+
+# TODO
+# help-tools-dtrace() {
+#   echo "
+# # Document dtrace tools!
+# " | ccat
+# }
+
+help-tools-cli-perf() {
+  echo "
+# 'uptime'
+# Uptime and CPU stress.
+
+# 'dmesg | tail'
+# Last ten system messages.
+
+# 'w'
+# Who has been on.
+
+# 'last or head'
+# Who is or has been on.
+
+# 'ps auxf'
+# Whats running.
+
+# 'vmstat 1'
+# 1 sets a one second query interval.
+# The 'procs' column shows waiting processes.
+# Procs > total CPUs == BAD.
+
+# 'mpstat -P ALL 1'
+# CPU usage by CPU.
+
+# 'pidstat 1'
+# like top, but a rolling history.
+
+# 'iostat -xz 1'
+
+# 'free -m'
+# Current free memory in megabytes.
+
+# 'sar -n DEV 1'
+# Without flags, this is equal to mpstat, but it rolls up CPUs.
+# The '-n' flag switches to network info.
+
+# 'sar -n TCP,ETCP 1'
+# Active network connections.
+
+# 'netstat -lntup'
+# processes and owners of open TCP or UDP ports.
+
+# 'netstat -atpn'
+# all currently active tcp network streams.
+
+# 'netstat -tlpn'
+# find server role.
+
+# Other netstats: 'netstat -panult', 'netstat -penult'
+
+# 'df -hi'
+# Out of disk space?
+
+# 'grep kill /var/log/messages'
+# Out of memory?
+
+# 'htop'
+# Stressed?
+# Look out for D (waiting on I/O typically) processes.
+
+# 'history'
+# What has changed recently.
+
+# 'tail /var/log/application.log'
+# Anything interesting logged?
+
+# 'tty'
+# Returns the terminal name.
+
+# Various neworking commands: 'ngrep', 'tcpdump', 'tcpflow', 'nc', 'nmap'
+
+# Various monitoring tools:
+# 'htop' - PID Dashboard
+# 'vtop' - Fancy PID Dashboard
+# 'glances' - Another Fancy PID Dashboard
+# 'atop' - Active Process Dashboard
+# 'iotop' - I/O Dashboard
+# 'iftop' - Network Dashboard
+# 'dstat' - nicer version of vmstat + iostat + ifstat
+# 'mtr' - trace route + ping
+
+# Monitoring Daemons:
+# 'psmon', 'monit'
+" | ccat
+}
+
+help-tools-tmux() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/tmux.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/tmux.md"
+}
+
+help-tools-vim() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/tools/vim.txt"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/vim.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vimscript-functions.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim-unite.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim-digraphs.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim-easyalign.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vimscript.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim-help.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vimscript-snippets.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vim-rails.md"
+}
+
+help-tools-emacs() {
+  code "/Users/Home/Repos/Reference/cheatsheets/emacs.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/org-mode.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/spacemacs.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/elisp.html.markdown"
+}
+
+help-tools-docker() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/tools/docker.sh"
+  code "/Users/Home/Repos/Reference/cheatsheets/docker-compose.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/docker.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/dockerfile.md"
+}
+
+help-tools-kube() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/tools/kubernetes.sh"
+}
+
+help-tools-git() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/git.html.markdown"
+  code "/Users/Home/Repos/Reference/git-best-practices.md"
+  code "/Users/Home/Repos/Reference/post-production-git.md"
+  code "/Users/Home/Repos/Reference/undo-fix-remove-commits.md"
+  code "/Users/Home/Repos/Reference/github-cheat-sheet/README.md"
+  code "/Users/Home/Repos/Reference/DBC/mdmartinez.github.io/resources/cheat-sheet.html"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-branch.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-extras.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-log-format.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-log.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-revisions.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/git-tricks.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/tig.md"
+}
+
+help-tools-redis() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/databases/redis.sh"
+}
+
+help-tools-postgres() {
+  code "/Users/Home/Repos/Reference/cheatsheets/postgresql.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/postgresql-json.md"
+}
+
+help-tools-make() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/make.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/makefile.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/make-assets.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/Makefile"
+}
+
+help-tools-all-macos() {
+  code "/Users/Home/Repos/Reference/cheatsheets/osx.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/applescript.md"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/tools/xcode.txt"
+  code "/Users/Home/Repos/Reference/cheatsheets/applinks.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ios-provision.md"
+}
+
+update-cheatsheets() {
+  git -C /Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs pull;
+  git -C /Users/Home/Repos/Reference/awesome-cheatsheets pull;
+  git -C /Users/Home/Repos/Reference/cheatsheets pull;
+}
+
+help-lang-cheatsheets() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs" "/Users/Home/Repos/Reference/awesome-cheatsheets" "/Users/Home/Repos/Reference/cheatsheets"
+}
+
+help-lang-bash() {
+  code "/Users/Home/Repos/Reference/code/recipes/Bash" "/Users/Home/Repos/Reference/shell-utils" "/Users/Home/Repos/Reference/perf-tools"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/languages/bash.sh"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/bash.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/bash.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/awk.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/homebrew.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/curl.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/cron.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/awscli.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ec2.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/imagemagick.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ffmpeg.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rename.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/man.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansi.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/animated_gif.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/httpie.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/heroku.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/figlet.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/pass.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/zsh.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/fish-shell.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vagrant.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/vagrantfile.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/circle.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansible-examples.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansible-guide.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansible-modules.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansible-roles.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ansible.md"
+}
+
+help-lang-html() {
+  code "/Users/Home/Repos/Reference/HTML_and_CSS" "/Users/Home/Repos/Reference/javascript-and-jquery-by-jon-duckett" "/Users/Home/Repos/Reference/html-reference"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/frontend/html5.html"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/html.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/meta-tags.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/pug.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html-email.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html-input.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html-meta.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html-microformats.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html-share.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/html.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/http-status.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/unicode.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/social-images.md"
+}
+
+help-lang-css() {
+  code "/Users/Home/Repos/Reference/css-reference" "/Users/Home/Repos/Reference/css-protips" "/Users/Home/Repos/Reference/bulma" "/Users/Home/Repos/Reference/bootstrap"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/css.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/css.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/sass.html.markdown"
+  code "/Users/Home/Repos/Reference/css/README.md"
+  code "/Users/Home/Repos/Reference/javascript/css-in-javascript/README.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/sass.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/stylus.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/bulma.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/bootstrap.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/css.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/css-antialias.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/css-flexbox.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/css-system-font-stack.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/css-tricks.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/cssnext.md"
+}
+
+help-lang-web() {
+  code "/Users/Home/Repos/Reference/design-blocks" "/Users/Home/Repos/Reference/simpl" "/Users/Home/Repos/Reference/ui-element-samples" "/Users/Home/Repos/Reference/solved-by-flexbox" "/Users/Home/Repos/Reference/flexbugs" "/Users/Home/Repos/Reference/rscss" "/Users/Home/Repos/Reference/SelectInspiration" "/Users/Home/Repos/Reference/flux-challenge" "/Users/Home/Repos/Reference/tufte-css" "/Users/Home/Repos/Reference/html5-boilerplate" "/Users/Home/Repos/Reference/web-starter-kit"
+}
+
+help-lang-python() {
+  code "/Users/Home/Repos/Reference/linkedin_learning_exercise_files/advanced_python/Exercise Files" "/Users/Home/Repos/Reference/code/recipes/Python" "/Users/Home/Repos/Reference/python-patterns" "/Users/Home/Repos/Reference/flasky" "/Users/Home/Repos/Reference/pysheeet/docs/notes"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/python3.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/python.md"
+  code "/Users/Home/Repos/Reference/python-resources.md"
+  code "/Users/Home/Repos/Reference/Tiny-Python-3.6-Notebook/python.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/shutit.html.markdown"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/backend/django.py"
+}
+
+help-lang-js() {
+  code "/Users/Home/Repos/Reference/code/recipes/JavaScript"
+  code "/Users/Home/Repos/Reference/Tiny-ES6-Notebook/es6.rst"
+  code "/Users/Home/Repos/Reference/cheatsheets/es6.md"
+  code "/Users/Home/Repos/Reference/es6features/README.md"
+  code "/Users/Home/Repos/Reference/javascript/README.md"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/languages/javascript.js"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/javascript.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/json.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/typescript.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/package.json.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/dom-range.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/dom-selection.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/canvas.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/promise.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/moment.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/immutable.js.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/101.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/web-workers.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/xpath.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/analytics.js.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/analytics.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/mixpanel.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-array.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-date.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-fetch.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-lazy.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-model.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/js-speech.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/jscoverage.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/jsdoc.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/jshint.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/flow.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/jquery.html.markdown"
+  code "/Users/Home/Repos/Reference/javascript-resources.md"
+  code "/Users/Home/Repos/Reference/hn.js"
+}
+
+help-lang-node() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/backend/node.js"
+  code "/Users/Home/Repos/Reference/cheatsheets/express.md"
+  code "/Users/Home/Repos/Reference/spellbook-of-modern-webdev/README.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs-assert.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs-fs.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs-path.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs-process.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs-stream.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nodejs.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/nopt.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/npm.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/yarn.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/pm2.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rollup.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/webpack.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/semver.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/sequelize.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/jest.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/mocha.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/tape.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/chai.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/expectjs.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/fastify.md"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/backend/feathers.js"
+}
+
+help-lang-react() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/frontend/react.js"
+  code "/Users/Home/Repos/Reference/javascript/react/README.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/react-router.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/react.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/react@0.14.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/redux.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/awesome-redux.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/flux.md"
+}
+
+help-lang-vue() {
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/frontend/vue.js"
+  code "/Users/Home/Repos/Reference/cheatsheets/vue.md"
+}
+
+help-lang-doc-formats() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/markdown.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/markdown.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/rst.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/asciidoc.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/yaml.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/xml.html.markdown"
+}
+
+help-lang-swift() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/swift.html.markdown"
+}
+
+help-lang-php() {
+  code "/Users/Home/Repos/Reference/code/recipes/PHP"
+  code "/Users/Home/Repos/Reference/design-patterns-for-humans/README.md"
+  code "/Users/Home/Repos/Reference/awesome-cheatsheets/languages/php.php"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/php.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/php-composer.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/composer.md"
+}
+
+help-lang-rust() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/rust.html.markdown"
+}
+
+help-lang-go() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/go.html.markdown"
+}
+
+help-lang-ruby() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/ruby.html.markdown"
+  code "/Users/Home/Repos/Reference/ruby/README.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/bundler.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rbenv.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/pry.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rubygems.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rake.md"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/haml.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-controllers.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-features.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-forms.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-gems.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-helpers.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-i18n.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-migrations.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-models.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-plugins.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-routes.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails-tricks.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/rails.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/activeadmin.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/devise.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/chef.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/capybara.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/factory_bot.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ffaker.md"
+}
+
+help-lang-elixir() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/erlang.html.markdown"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/elixir.html.markdown"
+  code "/Users/Home/Repos/Reference/cheatsheets/elixir.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/elixir-metaprogramming.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/ets.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/absinthe.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-conn.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-ecto.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-ecto@1.2.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-ecto@1.3.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-migrations.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix-routing.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix.md"
+  code "/Users/Home/Repos/Reference/cheatsheets/phoenix@1.2.md"
+}
+
+help-lang-r() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/r.html.markdown"
+}
+
+help-lang-c() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/c.html.markdown"
+}
+
+help-lang-cpp() {
+  code "/Users/Home/Repos/Reference/code/recipes/C++"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/c++.html.markdown"
+}
+
+help-lang-java() {
+  code "/Users/Home/Repos/Reference/code/recipes/Java"
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/java.html.markdown"
+}
+
+help-lang-csharp() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/csharp.html.markdown"
+}
+
+help-lang-scala() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/scala.html.markdown"
+}
+
+help-lang-clojure() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/clojure.html.markdown"
+}
+
+help-lang-julia() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/julia.html.markdown"
+}
+
+help-lang-elm() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/elm.html.markdown"
+}
+
+help-lang-haskell() {
+  code "/Users/Home/Repos/Reference/learn-x-in-y-cheatsheets/learnxinyminutes-docs/haskell.html.markdown"
+}
